@@ -97,6 +97,19 @@
         ],
         "description": "Load previous context and detect package manager on new session",
         "id": "session:start"
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/continuous-learning-v2/agents/start-observer.sh\" start",
+            "async": true,
+            "timeout": 15
+          }
+        ],
+        "description": "Launch continuous-learning observer (background Haiku analyzer)",
+        "id": "session:observer-start"
       }
     ],
     "PostToolUse": [
