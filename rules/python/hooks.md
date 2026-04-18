@@ -7,13 +7,14 @@ paths:
 
 > This file extends [common/hooks.md](../common/hooks.md) with Python specific content.
 
-## PostToolUse Hooks
+## Installed Hooks That Act on Python Files
 
-Configure in `~/.claude/settings.json`:
-
-- **black/ruff**: Auto-format `.py` files after edit
-- **mypy/pyright**: Run type checking after editing `.py` files
+| ID | Event | Effect |
+|----|-------|--------|
+| `post:quality-gate` | PostToolUse | Runs `ruff` / `mypy` / `bandit` if configured in `pyproject.toml` |
+| `pre:config-protection` | PreToolUse | Blocks edits of `pyproject.toml`, `ruff.toml`, `.mypy.ini`, `.bandit` |
+| `pre:edit-write:gateguard-fact-force` | PreToolUse | Fact-forcing gate on first edit per `.py` |
 
 ## Warnings
 
-- Warn about `print()` statements in edited files (use `logging` module instead)
+- Prefer the `logging` module over `print()` in non-CLI code

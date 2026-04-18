@@ -26,32 +26,33 @@ MANDATORY workflow:
 
 ## Agent Support
 
-- **tdd-guide** - Use PROACTIVELY for new features, enforces write-tests-first
+- **tdd-guide** — Use PROACTIVELY for new features, enforces write-tests-first
+- **pr-test-analyzer** — Evaluate whether tests catch real regressions, not just hit coverage numbers
+- **pytorch-build-resolver** — Runtime failures inside PyTorch test runs (CUDA OOM, device mismatch, shape errors, AMP/autograd)
 
 ## Test Structure (AAA Pattern)
 
 Prefer Arrange-Act-Assert structure for tests:
 
-```typescript
-test('calculates similarity correctly', () => {
-  // Arrange
-  const vector1 = [1, 0, 0]
-  const vector2 = [0, 1, 0]
+```python
+def test_cosine_similarity_orthogonal_returns_zero():
+    # Arrange
+    vector_a = [1, 0, 0]
+    vector_b = [0, 1, 0]
 
-  // Act
-  const similarity = calculateCosineSimilarity(vector1, vector2)
+    # Act
+    similarity = cosine_similarity(vector_a, vector_b)
 
-  // Assert
-  expect(similarity).toBe(0)
-})
+    # Assert
+    assert similarity == 0
 ```
 
 ### Test Naming
 
 Use descriptive names that explain the behavior under test:
 
-```typescript
-test('returns empty array when no markets match query', () => {})
-test('throws error when API key is missing', () => {})
-test('falls back to substring search when Redis is unavailable', () => {})
+```python
+def test_returns_empty_list_when_no_markets_match_query(): ...
+def test_raises_value_error_when_api_key_missing(): ...
+def test_falls_back_to_substring_search_when_redis_unavailable(): ...
 ```

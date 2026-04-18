@@ -4,26 +4,56 @@
 
 Located in `~/.claude/agents/`:
 
+### Feature development pipeline
+
 | Agent | Purpose | When to Use |
 |-------|---------|-------------|
-| planner | Implementation planning | Complex features, refactoring |
-| architect | System design | Architectural decisions |
-| tdd-guide | Test-driven development | New features, bug fixes |
-| code-reviewer | Code review | After writing code |
-| security-reviewer | Security analysis | Before commits |
-| build-error-resolver | Fix build errors | When build fails |
-| e2e-runner | E2E testing | Critical user flows |
-| refactor-cleaner | Dead code cleanup | Code maintenance |
-| doc-updater | Documentation | Updating docs |
-| rust-reviewer | Rust code review | Rust projects |
+| `code-explorer` | Map existing code (execution flow, dependencies) | Starting work in an unfamiliar area |
+| `code-architect` | Design new feature: files, interfaces, build order | After exploration or in a familiar area |
+| `planner` | Product-level plan (requirements, phases, risks, success criteria) | Complex feature needing a written artifact |
+| `tdd-guide` | RED → GREEN → REFACTOR, 80%+ coverage | New feature, bug fix |
+
+### PR & code review
+
+| Agent | Purpose | When to Use |
+|-------|---------|-------------|
+| `python-reviewer` | PEP 8, type hints, bandit, framework issues | On `git diff` after Python edits |
+| `silent-failure-hunter` | Swallowed exceptions, bad fallbacks, lost stack traces | Every PR (language-agnostic) |
+| `pr-test-analyzer` | Test coverage quality, behavioral coverage, real-bug prevention | Evaluating whether PR's tests are meaningful |
+| `database-reviewer` | PostgreSQL query / schema / migration review | SQL, migrations, schema design |
+
+### ML-specific
+
+| Agent | Purpose | When to Use |
+|-------|---------|-------------|
+| `pytorch-build-resolver` | Tensor shape, CUDA, DataLoader, AMP, autograd fixes | PyTorch training / inference crashes |
+
+### GAN-harness triplet (greenfield UI from a one-line brief)
+
+| Agent | Purpose |
+|-------|---------|
+| `gan-planner` | Expand brief into `spec.md` + eval rubric |
+| `gan-generator` | Implement features, run dev server, commit per iteration |
+| `gan-evaluator` | Playwright-test the live app, score, write feedback files |
+
+### Meta
+
+| Agent | Purpose | When to Use |
+|-------|---------|-------------|
+| `harness-optimizer` | Edit hooks, settings, agent frontmatter, install manifests | Noisy/blocking hooks, cost pressure, post-upgrade regressions |
 
 ## Immediate Agent Usage
 
-No user prompt needed:
-1. Complex feature requests - Use **planner** agent
-2. Code just written/modified - Use **code-reviewer** agent
-3. Bug fix or new feature - Use **tdd-guide** agent
-4. Architectural decision - Use **architect** agent
+No user prompt needed — spawn automatically when the situation matches:
+
+| Situation | Agent |
+|-----------|-------|
+| Complex feature request with written plan needed | `planner` |
+| Feature in unfamiliar code area | `code-explorer` → `code-architect` |
+| New feature or bug fix with tests | `tdd-guide` |
+| PyTorch crash with traceback | `pytorch-build-resolver` |
+| PR review on Python diff | `python-reviewer` + `silent-failure-hunter` (parallel) |
+| Greenfield UI from a brief | `gan-planner` → `gan-generator` ⇄ `gan-evaluator` |
 
 ## Parallel Task Execution
 
@@ -42,9 +72,22 @@ First agent 1, then agent 2, then agent 3
 
 ## Multi-Perspective Analysis
 
-For complex problems, use split role sub-agents:
-- Factual reviewer
-- Senior engineer
-- Security expert
-- Consistency reviewer
-- Redundancy checker
+For complex problems, spawn multiple agents with distinct roles on the
+same input and merge their outputs:
+
+- `python-reviewer` — language quality
+- `silent-failure-hunter` — error-handling correctness
+- `pr-test-analyzer` — test coverage meaningfulness
+- `security-review` skill — security triage
+
+## Context Flow Between Subagents
+
+Subagents receive **only**: their system prompt + global rules + the
+`prompt` string passed via `Agent()`. They do **not** see the main
+conversation, main agent's thinking, other subagents' results, or files
+the main agent read.
+
+Package every prior result you want them to use into the `prompt`
+explicitly. For pipelines of 3+ steps, use artifact files
+(e.g. `docs/<feature>/01-exploration.md`, `02-plan.md`, …) and pass file
+paths instead of inlining large content.

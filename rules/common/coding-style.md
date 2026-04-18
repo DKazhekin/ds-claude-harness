@@ -58,11 +58,13 @@ ALWAYS validate at system boundaries:
 
 ## Naming Conventions
 
-- Variables and functions: `camelCase` with descriptive names
-- Booleans: prefer `is`, `has`, `should`, or `can` prefixes
-- Interfaces, types, and components: `PascalCase`
+Follow the idiomatic convention of the target language. For Python
+specifics see [`../python/coding-style.md`](../python/coding-style.md).
+
+- Use descriptive names — prefer clarity over brevity
+- Booleans: prefer `is_`, `has_`, `should_`, or `can_` prefixes
 - Constants: `UPPER_SNAKE_CASE`
-- Custom hooks: `camelCase` with a `use` prefix
+- Avoid single-letter names outside short comprehensions / math indices
 
 ## Code Smells to Avoid
 

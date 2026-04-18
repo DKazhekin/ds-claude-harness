@@ -27,4 +27,5 @@ api_key = os.environ["OPENAI_API_KEY"]  # Raises KeyError if missing
 
 ## Reference
 
-See skill: `django-security` for Django-specific security guidelines (if applicable).
+Run the `security-review` skill for OWASP-style triage. Python CWE
+coverage comes from `bandit` via the `python-reviewer` agent.

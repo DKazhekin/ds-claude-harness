@@ -12,7 +12,7 @@
 - Orchestrating multi-agent workflows
 - Complex coding tasks
 
-**Opus 4.5** (Deepest reasoning):
+**Opus 4.7** (Deepest reasoning):
 - Complex architectural decisions
 - Maximum reasoning requirements
 - Research and analysis tasks
@@ -46,10 +46,10 @@ For complex tasks requiring deep reasoning:
 3. Use multiple critique rounds for thorough analysis
 4. Use split role sub-agents for diverse perspectives
 
-## Build Troubleshooting
+## Runtime Troubleshooting
 
-If build fails:
-1. Use **build-error-resolver** agent
-2. Analyze error messages
-3. Fix incrementally
-4. Verify after each fix
+If a PyTorch training or inference script crashes:
+1. Use **pytorch-build-resolver** agent with the full traceback
+2. Analyze error messages (tensor shape, device, CUDA OOM, autograd, AMP)
+3. Apply minimal surgical fixes; avoid refactors in the same pass
+4. Verify after each fix by re-running the exact failing command

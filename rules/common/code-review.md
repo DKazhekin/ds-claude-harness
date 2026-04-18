@@ -32,13 +32,14 @@ Before marking code complete:
 - [ ] No deep nesting (>4 levels)
 - [ ] Errors are handled explicitly
 - [ ] No hardcoded secrets or credentials
-- [ ] No console.log or debug statements
+- [ ] No `print()` or debug statements left in non-CLI code
 - [ ] Tests exist for new functionality
 - [ ] Test coverage meets 80% minimum
 
 ## Security Review Triggers
 
-**STOP and use security-reviewer agent when:**
+**STOP and run the `security-review` skill (plus `python-reviewer` for
+bandit coverage) when the diff touches:**
 
 - Authentication or authorization code
 - User input handling
@@ -59,16 +60,16 @@ Before marking code complete:
 
 ## Agent Usage
 
-Use these agents for code review:
+Run reviewers in parallel on the same diff:
 
 | Agent | Purpose |
 |-------|---------|
-| **code-reviewer** | General code quality, patterns, best practices |
-| **security-reviewer** | Security vulnerabilities, OWASP Top 10 |
-| **typescript-reviewer** | TypeScript/JavaScript specific issues |
-| **python-reviewer** | Python specific issues |
-| **go-reviewer** | Go specific issues |
-| **rust-reviewer** | Rust specific issues |
+| **python-reviewer** | PEP 8, type hints, Pythonic idioms, bandit security |
+| **silent-failure-hunter** | Swallowed exceptions, bad fallbacks, lost stack traces (language-agnostic) |
+| **pr-test-analyzer** | Test coverage quality, behavioral coverage, real-bug prevention |
+| **database-reviewer** | PostgreSQL query / schema / migration review |
+
+For security pair them with the `security-review` skill.
 
 ## Review Workflow
 
