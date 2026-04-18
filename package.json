@@ -1,0 +1,55 @@
+{
+  "name": "ds-claude-harness",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Personal ML/LLM Claude Code harness — curated fork of everything-claude-code focused on PyTorch, LLM evaluation, and agent engineering.",
+  "license": "MIT",
+  "files": [
+    ".claude-plugin/",
+    ".claude/",
+    ".mcp.json",
+    "CLAUDE.md",
+    "agents/",
+    "commands/",
+    "hooks/",
+    "install.ps1",
+    "install.sh",
+    "manifests/",
+    "mcp-configs/",
+    "rules/",
+    "scripts/",
+    "skills/",
+    "tests/"
+  ],
+  "bin": {
+    "ecc": "scripts/ecc.js",
+    "ecc-install": "scripts/install-apply.js"
+  },
+  "scripts": {
+    "install:work": "node scripts/ecc.js install --profile ds-work --target claude",
+    "install:personal": "node scripts/ecc.js install --profile ds-personal --target claude",
+    "install:work:dry": "node scripts/ecc.js install --profile ds-work --target claude --dry-run --json",
+    "install:personal:dry": "node scripts/ecc.js install --profile ds-personal --target claude --dry-run --json",
+    "uninstall": "node scripts/ecc.js uninstall --target claude",
+    "status": "node scripts/ecc.js status --target claude",
+    "doctor": "node scripts/ecc.js doctor",
+    "harness:audit": "node scripts/harness-audit.js",
+    "validate": "node scripts/ci/validate-agents.js && node scripts/ci/validate-commands.js && node scripts/ci/validate-rules.js && node scripts/ci/validate-skills.js && node scripts/ci/validate-hooks.js && node scripts/ci/validate-install-manifests.js",
+    "test": "node scripts/ci/check-unicode-safety.js && npm run validate"
+  },
+  "dependencies": {
+    "@iarna/toml": "^2.2.5",
+    "ajv": "^8.18.0",
+    "sql.js": "^1.14.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "c8": "^11.0.0",
+    "eslint": "^9.39.2",
+    "globals": "^17.4.0",
+    "markdownlint-cli": "^0.48.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

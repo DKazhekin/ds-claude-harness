@@ -1,0 +1,38 @@
+{
+  "name": "ds-claude-harness",
+  "version": "0.1.0",
+  "description": "Personal ML/LLM Claude Code harness — curated fork with 16 agents, 34 skills, 10 commands, 15 hooks for DS work on LLM moderation and agent evaluation.",
+  "author": {
+    "name": "Denis"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "ml",
+    "llm",
+    "agents",
+    "evaluation",
+    "pytorch",
+    "data-science"
+  ],
+  "agents": [
+    "./agents/build-error-resolver.md",
+    "./agents/code-architect.md",
+    "./agents/code-explorer.md",
+    "./agents/database-reviewer.md",
+    "./agents/gan-evaluator.md",
+    "./agents/gan-generator.md",
+    "./agents/gan-planner.md",
+    "./agents/harness-optimizer.md",
+    "./agents/planner.md",
+    "./agents/pr-test-analyzer.md",
+    "./agents/python-reviewer.md",
+    "./agents/pytorch-build-resolver.md",
+    "./agents/security-reviewer.md",
+    "./agents/silent-failure-hunter.md",
+    "./agents/tdd-guide.md",
+    "./agents/typescript-reviewer.md"
+  ],
+  "skills": ["./skills/"],
+  "commands": ["./commands/"]
+}

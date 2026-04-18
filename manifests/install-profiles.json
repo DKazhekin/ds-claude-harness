@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "profiles": {
+    "ds-work": {
+      "description": "DS work harness: LLM censor development, SQL read-only for evals/logs, TS agents.",
+      "modules": [
+        "ds-core",
+        "ds-hooks",
+        "ds-llm-skills",
+        "ds-python-ts",
+        "ds-sql-read"
+      ]
+    },
+    "ds-personal": {
+      "description": "DS personal harness: everything in ds-work plus full DB stack and deep research.",
+      "modules": [
+        "ds-core",
+        "ds-hooks",
+        "ds-llm-skills",
+        "ds-python-ts",
+        "ds-sql-read",
+        "ds-db-full",
+        "ds-research"
+      ]
+    }
+  }
+}
