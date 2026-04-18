@@ -237,7 +237,7 @@ function runTests() {
   if (test('component catalog includes agent: family entries', () => {
     const components = listInstallComponents({ family: 'agent' });
     assert.ok(components.length > 0, 'Should have at least one agent component');
-    assert.ok(components.some(c => c.id === 'agent:security-reviewer'), 'Should have agent:security-reviewer');
+    assert.ok(components.some(c => c.id === 'agent:python-reviewer'), 'Should have agent:python-reviewer');
   })) passed++; else failed++;
 
   if (test('component catalog includes skill: family entries', () => {
@@ -401,24 +401,24 @@ function runTests() {
   if (test('--without with agent: component excludes the agent module', () => {
     const plan = resolveInstallPlan({
       profileId: 'core',
-      excludeComponentIds: ['agent:security-reviewer'],
+      excludeComponentIds: ['agent:python-reviewer'],
       target: 'claude',
     });
-    // agent:security-reviewer maps to agents-core module
+    // agent:python-reviewer maps to agents-core module
     // Since core profile includes agents-core and it is excluded, it should be gone
     assert.ok(!plan.selectedModuleIds.includes('agents-core'),
-      'Should exclude agents-core when agent:security-reviewer is excluded');
+      'Should exclude agents-core when agent:python-reviewer is excluded');
     assert.ok(plan.excludedModuleIds.includes('agents-core'),
       'Should report agents-core as excluded');
   })) passed++; else failed++;
 
   if (test('--with agent: component includes the agents-core module', () => {
     const plan = resolveInstallPlan({
-      includeComponentIds: ['agent:security-reviewer'],
+      includeComponentIds: ['agent:python-reviewer'],
       target: 'claude',
     });
     assert.ok(plan.selectedModuleIds.includes('agents-core'),
-      'Should include agents-core module from agent:security-reviewer');
+      'Should include agents-core module from agent:python-reviewer');
   })) passed++; else failed++;
 
   if (test('--with skill: component includes the parent skill module', () => {
@@ -477,7 +477,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  if (test('end-to-end: --with lang:python --with agent:security-reviewer --dry-run', () => {
+  if (test('end-to-end: --with lang:python --with agent:python-reviewer --dry-run', () => {
     const { execFileSync } = require('child_process');
     const scriptPath = path.join(__dirname, '..', '..', 'scripts', 'install-apply.js');
     const homeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'selective-e2e-'));
@@ -487,7 +487,7 @@ function runTests() {
       const result = execFileSync('node', [
         scriptPath,
         '--with', 'lang:python',
-        '--with', 'agent:security-reviewer',
+        '--with', 'agent:python-reviewer',
         '--dry-run',
       ], {
         cwd: projectDir,
@@ -498,7 +498,7 @@ function runTests() {
 
       assert.ok(result.includes('Mode: manifest'), 'Should be manifest mode');
       assert.ok(result.includes('lang:python'), 'Should show lang:python as included');
-      assert.ok(result.includes('agent:security-reviewer'), 'Should show agent:security-reviewer as included');
+      assert.ok(result.includes('agent:python-reviewer'), 'Should show agent:python-reviewer as included');
     } finally {
       fs.rmSync(homeDir, { recursive: true, force: true });
       fs.rmSync(projectDir, { recursive: true, force: true });

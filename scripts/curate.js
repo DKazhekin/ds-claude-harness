@@ -18,9 +18,7 @@ const DEST = path.resolve(__dirname, '..');
 const AGENTS = [
   'pytorch-build-resolver',
   'python-reviewer',
-  'typescript-reviewer',
   'database-reviewer',
-  'security-reviewer',
   'silent-failure-hunter',
   'gan-planner',
   'gan-generator',
@@ -31,7 +29,6 @@ const AGENTS = [
   'planner',
   'code-architect',
   'code-explorer',
-  'build-error-resolver',
 ];
 
 const SKILLS = [

@@ -419,16 +419,6 @@ function getRepoChecks(rootDir) {
       fix: 'Add skills/security-review/SKILL.md for security checklist coverage.',
     },
     {
-      id: 'security-agent',
-      category: 'Security Guardrails',
-      points: 3,
-      scopes: ['repo', 'agents'],
-      path: 'agents/security-reviewer.md',
-      description: 'Security reviewer agent exists',
-      pass: fileExists(rootDir, 'agents/security-reviewer.md'),
-      fix: 'Add agents/security-reviewer.md for delegated security audits.',
-    },
-    {
       id: 'security-prompt-hook',
       category: 'Security Guardrails',
       points: 2,

@@ -230,7 +230,7 @@ async function seedStore(dbPath) {
     eventType: 'policy-review-required',
     payload: {
       severity: 'warning',
-      owner: 'security-reviewer',
+      owner: 'python-reviewer',
     },
     resolvedAt: null,
     resolution: null,
