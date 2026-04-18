@@ -1,7 +1,7 @@
 {
   "name": "ds-claude-harness",
   "version": "0.1.0",
-  "description": "Personal ML/LLM Claude Code harness — curated fork with 13 agents, 34 skills, 10 commands, 15 hooks for DS work on LLM moderation and agent evaluation.",
+  "description": "Personal ML/LLM Claude Code harness — curated fork with 13 agents, 34 skills, 1 command, 15 hooks for DS work on LLM moderation and agent evaluation.",
   "author": {
     "name": "Denis"
   },

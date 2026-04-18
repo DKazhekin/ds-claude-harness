@@ -68,19 +68,7 @@ const SKILLS = [
   'mcp-server-patterns',
 ];
 
-const COMMANDS = [
-  'tdd',
-  'plan',
-  'eval',
-  'instinct-status',
-  'harness-audit',
-  'code-review',
-  'python-review',
-  'context-budget',
-  'quality-gate',
-  'learn',
-  'build-fix',
-];
+const COMMANDS = ['instinct-status'];
 
 const RULE_DIRS = ['common', 'python', 'typescript'];
 
@@ -94,7 +82,6 @@ const TOP_SCRIPTS = [
   'status.js',
   'list-installed.js',
   'uninstall.js',
-  'harness-audit.js',
   'setup-package-manager.js',
   'skills-health.js',
 ];
@@ -182,10 +169,8 @@ function copyScripts() {
   }
   const libCount = copyDir(path.join(UPSTREAM, 'scripts', 'lib'), path.join(DEST, 'scripts', 'lib'));
   const hooksCount = copyDir(path.join(UPSTREAM, 'scripts', 'hooks'), path.join(DEST, 'scripts', 'hooks'));
-  const ciCount = copyDir(path.join(UPSTREAM, 'scripts', 'ci'), path.join(DEST, 'scripts', 'ci'));
   log('scripts/lib files', libCount);
   log('scripts/hooks files', hooksCount);
-  log('scripts/ci files', ciCount);
 }
 
 function copyInstallers() {
@@ -194,11 +179,6 @@ function copyInstallers() {
     if (fs.existsSync(src)) copyFile(src, path.join(DEST, name));
   }
   log('installers', INSTALL_FILES.join(', '));
-}
-
-function copyTests() {
-  const count = copyDir(path.join(UPSTREAM, 'tests'), path.join(DEST, 'tests'));
-  log('tests files', count);
 }
 
 function main() {
@@ -214,7 +194,6 @@ function main() {
   copyRules();
   copyScripts();
   copyInstallers();
-  copyTests();
   log('done', 'ok');
 }
 

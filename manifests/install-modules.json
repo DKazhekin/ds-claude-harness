@@ -4,7 +4,7 @@
     {
       "id": "ds-core",
       "kind": "rules",
-      "description": "Rules (common/python/typescript), 16 curated agents, 10 slash commands, platform configs, MCP catalog.",
+      "description": "Rules (common/python/typescript), 13 curated agents, 1 slash command, platform configs, MCP catalog.",
       "paths": [
         "rules",
         "agents",

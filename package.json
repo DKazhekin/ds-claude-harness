@@ -18,8 +18,7 @@
     "mcp-configs/",
     "rules/",
     "scripts/",
-    "skills/",
-    "tests/"
+    "skills/"
   ],
   "bin": {
     "ecc": "scripts/ecc.js",
@@ -32,10 +31,7 @@
     "install:personal:dry": "node scripts/ecc.js install --profile ds-personal --target claude --dry-run --json",
     "uninstall": "node scripts/ecc.js uninstall --target claude",
     "status": "node scripts/ecc.js status --target claude",
-    "doctor": "node scripts/ecc.js doctor",
-    "harness:audit": "node scripts/harness-audit.js",
-    "validate": "node scripts/ci/validate-agents.js && node scripts/ci/validate-commands.js && node scripts/ci/validate-rules.js && node scripts/ci/validate-skills.js && node scripts/ci/validate-hooks.js && node scripts/ci/validate-install-manifests.js",
-    "test": "node scripts/ci/check-unicode-safety.js && npm run validate"
+    "doctor": "node scripts/ecc.js doctor"
   },
   "dependencies": {
     "@iarna/toml": "^2.2.5",
