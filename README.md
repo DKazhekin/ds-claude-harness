@@ -98,6 +98,43 @@ jq '.permissions.deny | map(select(startswith("Bash(git commit") or startswith("
   ~/.claude/settings.json                        # git-safety applied
 ```
 
+### 5. Continuous-learning storage (one-time, per machine)
+
+Claude Code 2.1.x blocks sub-Claude `Write` calls on any path starting with
+`~/.claude/` in headless (`--print`) mode. The `continuous-learning-v2`
+observer writes instincts into `~/.claude/homunculus/projects/<id>/instincts/`,
+which is exactly such a path. Without the workaround below, the observer
+collects observations but never produces instinct files.
+
+Fix: move the homunculus storage out of `~/.claude/` and symlink it back.
+Scripts auto-resolve through the symlink via `readlink -f`.
+
+```bash
+# Stop the observer daemon if running
+bash ~/.claude/skills/continuous-learning-v2/agents/start-observer.sh stop
+
+# Migrate storage out of ~/.claude/ (idempotent — safe to re-run)
+if test -L "$HOME/.claude/homunculus"; then
+  echo "already migrated"
+elif test -d "$HOME/.claude/homunculus" && ! test -e "$HOME/homunculus"; then
+  mv "$HOME/.claude/homunculus" "$HOME/homunculus"
+  ln -s "$HOME/homunculus" "$HOME/.claude/homunculus"
+elif ! test -e "$HOME/.claude/homunculus" && ! test -e "$HOME/homunculus"; then
+  mkdir -p "$HOME/homunculus"
+  ln -s "$HOME/homunculus" "$HOME/.claude/homunculus"
+else
+  echo "conflict: both ~/.claude/homunculus and ~/homunculus exist — resolve manually"
+fi
+
+# Restart daemon (picks up resolved path)
+bash ~/.claude/skills/continuous-learning-v2/agents/start-observer.sh start
+```
+
+Verify: within one analysis cycle (~5 min, or force with `kill -USR1 $(cat
+~/homunculus/projects/*/.observer.pid)`), `.md` files should appear under
+`~/homunculus/projects/<id>/instincts/personal/`. Check `/instinct-status`
+inside Claude Code to see extracted insights.
+
 ## What's inside
 
 | Component | Count |
@@ -151,6 +188,60 @@ git remote add upstream https://github.com/affaan-m/everything-claude-code.git
 git fetch upstream
 # review scripts/curate.js whitelist, re-run, merge manually
 ```
+
+## Continuous learning
+
+`continuous-learning-v2` passively collects session patterns and surfaces
+them as instinct files. Two-layer model: **raw instincts** (auto-written by
+the observer) → **learned skills** (manually promoted by you).
+
+### Storage
+
+```
+~/homunculus/                              # symlinked from ~/.claude/homunculus
+├── projects/<id>/
+│   ├── instincts/personal/    ← raw *.md from observer
+│   ├── instincts/inherited/   ← copied from other projects
+│   ├── evolved/{skills,agents,commands}/  ← CLI-generated drafts
+│   └── observations.jsonl
+└── instincts/                 ← global scope (cross-project)
+```
+
+### View
+
+```bash
+/instinct-status                                       # grouped by domain
+cat ~/homunculus/projects/<id>/instincts/personal/*.md # raw bodies
+```
+
+### Workflow (3 levels)
+
+1. **Daily** — `/instinct-status` to skim recent patterns.
+2. **Weekly** — evolve mature ones into skill/agent drafts:
+   ```bash
+   python3 ~/.claude/skills/continuous-learning-v2/scripts/instinct-cli.py evolve --generate
+   ```
+   Drafts appear in `~/homunculus/projects/<id>/evolved/`.
+3. **Monthly** — promote what you actually use:
+   - Cross-project? `instinct-cli.py promote <id>` (project → global).
+   - Battle-tested? Copy into a real skill:
+     ```bash
+     mkdir -p ~/.claude/skills/learned/<name>
+     cp ~/homunculus/projects/<id>/evolved/skills/<name>.md \
+        ~/.claude/skills/learned/<name>/SKILL.md
+     # Edit: tighten trigger, add examples, remove auto-generated boilerplate
+     ```
+   - Want it to survive `ecc.js install` and sync across machines?
+     Put the finished skill in the repo: `skills/<name>/SKILL.md`, commit.
+
+### Confidence threshold
+
+Observer assigns 0.3–0.85 based on frequency. Rule of thumb:
+
+- `< 0.5` — noise, let it expire (`instinct-cli.py prune`).
+- `0.5–0.7` — watch, don't act.
+- `≥ 0.7` — candidate for `evolve`.
+- `≥ 0.85` — candidate for `promote` to global or `learned/`.
 
 ## License
 

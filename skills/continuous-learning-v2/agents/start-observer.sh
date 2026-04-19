@@ -29,6 +29,15 @@ OBSERVER_LOOP_SCRIPT="${SCRIPT_DIR}/observer-loop.sh"
 # Source shared project detection helper
 # This sets: PROJECT_ID, PROJECT_NAME, PROJECT_ROOT, PROJECT_DIR
 source "${SKILL_ROOT}/scripts/detect-project.sh"
+
+# Resolve PROJECT_DIR via ~/.claude/homunculus real path. Claude Code 2.1.x
+# blocks sub-Claude Write to paths starting with ~/.claude/ in headless mode.
+# If ~/.claude/homunculus is a symlink to ~/homunculus, this makes all
+# downstream paths (PID_FILE, LOG_FILE, OBSERVATIONS_FILE, INSTINCTS_DIR)
+# resolve to the real directory outside ~/.claude/.
+_homunculus_real="$(readlink -f "$HOME/.claude/homunculus" 2>/dev/null || (cd "$HOME/.claude/homunculus" && pwd -P))"
+PROJECT_DIR="${_homunculus_real}/projects/${PROJECT_ID}"
+
 PYTHON_CMD="${CLV2_PYTHON_CMD:-}"
 
 # ─────────────────────────────────────────────

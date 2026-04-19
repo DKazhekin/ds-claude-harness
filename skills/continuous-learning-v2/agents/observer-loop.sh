@@ -203,8 +203,14 @@ PROMPT
   # Pass prompt via -p flag instead of stdin redirect for Windows compatibility (#842).
   # prompt_content is already loaded in-memory so this no longer depends on the
   # mktemp absolute path continuing to resolve after cwd changes (#1296).
+  # Resolve symlink: Claude Code 2.1.x blocks Write to paths starting with
+  # ~/.claude/ in headless mode. If ~/.claude/homunculus is a symlink to
+  # ~/homunculus, pass the real path to --add-dir so sub-Claude's Write
+  # tool receives a non-sensitive file_path.
+  _homunculus_real="$(readlink -f "$HOME/.claude/homunculus" 2>/dev/null || (cd "$HOME/.claude/homunculus" && pwd -P))"
   ECC_SKIP_OBSERVE=1 ECC_HOOK_PROFILE=minimal claude --model claude-haiku-4-5-20251001 --max-turns "$max_turns" --print \
     --allowedTools "Read,Write" \
+    --add-dir "$_homunculus_real" \
     -p "$prompt_content" >> "$LOG_FILE" 2>&1 &
   claude_pid=$!
 
