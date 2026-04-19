@@ -4,6 +4,13 @@ Personal ML/LLM Claude Code harness — a curated fork of
 [everything-claude-code](https://github.com/affaan-m/everything-claude-code)
 for data science work on LLM moderation and agent evaluation.
 
+## Prerequisites
+
+- **Node.js** ≥ 18 (`node --version`)
+- **Claude Code CLI** (`claude --version`) — run `claude` once so it creates `~/.claude/settings.json`
+- **`jq`** for the post-install merges — `brew install jq` on macOS
+- MCP env vars in `~/.zshrc`: `GITHUB_PERSONAL_ACCESS_TOKEN`, `EXA_API_KEY` (see step 2)
+
 ## Quick start
 
 ```bash
@@ -95,9 +102,9 @@ jq '.permissions.deny | map(select(startswith("Bash(git commit") or startswith("
 
 | Component | Count |
 |-----------|-------|
-| Agents | 16 — pytorch/python/ts reviewers, GAN loop, planners, error resolvers |
-| Skills | 34 — agent eval, strategic compact, PyTorch, LLM cost, safety |
-| Commands | 10 — `/tdd`, `/plan`, `/eval`, `/harness-audit`, `/instinct-status`, … |
+| Agents | 13 — pytorch/python reviewers, GAN loop, planners, code explorers |
+| Skills | 31 — agent eval, strategic compact, PyTorch, LLM cost, security |
+| Commands | 1 — `/instinct-status` |
 | Hooks | 15 — safety, quality-gate, smart compacting, continuous learning |
 | MCP servers | 6 — context7, sequential-thinking, github, exa, playwright, filesystem |
 
@@ -112,26 +119,25 @@ jq '.permissions.deny | map(select(startswith("Bash(git commit") or startswith("
 `.claude/settings.json` denies `git commit`, `git push`, `gh pr create/merge`,
 etc. No agent or hook in the harness auto-commits.
 
-## Testing
+## Maintenance
 
 ```bash
-npm test            # unicode-safety + validators + unit tests
-npm run validate    # validators only
-npm run harness:audit
+npm run status      # show installed harness components
+npm run doctor      # diagnose install state
+npm run uninstall   # remove harness from ~/.claude
 ```
 
 ## Layout
 
 ```
-agents/      16 specialized subagents
-skills/      34 workflow + domain skills
-commands/    10 slash commands
+agents/      13 specialized subagents
+skills/      31 workflow + domain skills
+commands/    1 slash command (/instinct-status)
 hooks/       15 lifecycle hooks (hooks.json)
 rules/       common + python + typescript
 manifests/   install-profiles.json, install-modules.json
 mcp-configs/ mcp-servers.json
 scripts/     ECC install system (CommonJS)
-tests/       CI validators + unit tests
 .claude/     settings.json with permissions.deny
 .mcp.json    MCP config for Claude Code
 ```
