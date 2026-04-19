@@ -203,7 +203,7 @@ PROMPT
   # Pass prompt via -p flag instead of stdin redirect for Windows compatibility (#842).
   # prompt_content is already loaded in-memory so this no longer depends on the
   # mktemp absolute path continuing to resolve after cwd changes (#1296).
-  ECC_SKIP_OBSERVE=1 ECC_HOOK_PROFILE=minimal claude --model haiku --max-turns "$max_turns" --print \
+  ECC_SKIP_OBSERVE=1 ECC_HOOK_PROFILE=minimal claude --model claude-haiku-4-5-20251001 --max-turns "$max_turns" --print \
     --allowedTools "Read,Write" \
     -p "$prompt_content" >> "$LOG_FILE" 2>&1 &
   claude_pid=$!

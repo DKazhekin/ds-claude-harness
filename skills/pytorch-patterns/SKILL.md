@@ -325,11 +325,13 @@ class LargeModel(nn.Module):
 ### torch.compile for Speed
 
 ```python
-# Good: Compile the model for faster execution (PyTorch 2.0+)
+# Good: Compile the model for faster execution (PyTorch 2.5+ stable)
 model = MyModel().to(device)
 model = torch.compile(model, mode="reduce-overhead")
 
 # Modes: "default" (safe), "reduce-overhead" (faster), "max-autotune" (fastest)
+# On Hopper/Ampere GPUs, prefer torch.nn.functional.scaled_dot_product_attention
+# for attention blocks — uses FlashAttention-2 kernels automatically.
 ```
 
 ## Quick Reference: PyTorch Idioms
@@ -342,7 +344,8 @@ model = torch.compile(model, mode="reduce-overhead")
 | `.to(device)` | Device-agnostic tensor/model placement |
 | `torch.amp.autocast` | Mixed precision for 2x speed |
 | `pin_memory=True` | Faster CPU→GPU data transfer |
-| `torch.compile` | JIT compilation for speed (2.0+) |
+| `torch.compile` | JIT compilation for speed (2.5+ stable) |
+| `F.scaled_dot_product_attention` | FlashAttention kernels for attention (2.0+) |
 | `weights_only=True` | Secure model loading |
 | `torch.manual_seed` | Reproducible experiments |
 | `gradient_checkpointing` | Trade compute for memory |

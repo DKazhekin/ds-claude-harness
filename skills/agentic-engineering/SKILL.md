@@ -31,9 +31,9 @@ Apply the 15-minute unit rule:
 
 ## Model Routing
 
-- Haiku: classification, boilerplate transforms, narrow edits
-- Sonnet: implementation and refactors
-- Opus: architecture, root-cause analysis, multi-file invariants
+- Haiku 4.5 (`claude-haiku-4-5-20251001`): classification, boilerplate transforms, narrow edits
+- Sonnet 4.6 (`claude-sonnet-4-6`): implementation and refactors
+- Opus 4.7 (`claude-opus-4-7`): architecture, root-cause analysis, multi-file invariants
 
 ## Session Strategy
 

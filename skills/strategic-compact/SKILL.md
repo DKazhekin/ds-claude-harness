@@ -30,7 +30,7 @@ Strategic compaction at logical boundaries:
 
 ## How It Works
 
-The `suggest-compact.js` script runs on PreToolUse (Edit/Write) and:
+The `suggest-compact.sh` script runs on PreToolUse (Edit/Write) and:
 
 1. **Tracks tool calls** — Counts tool invocations in session
 2. **Threshold detection** — Suggests at configurable threshold (default: 50 calls)
@@ -46,11 +46,11 @@ Add to your `~/.claude/settings.json`:
     "PreToolUse": [
       {
         "matcher": "Edit",
-        "hooks": [{ "type": "command", "command": "node ~/.claude/skills/strategic-compact/suggest-compact.js" }]
+        "hooks": [{ "type": "command", "command": "bash ~/.claude/skills/strategic-compact/suggest-compact.sh" }]
       },
       {
         "matcher": "Write",
-        "hooks": [{ "type": "command", "command": "node ~/.claude/skills/strategic-compact/suggest-compact.js" }]
+        "hooks": [{ "type": "command", "command": "bash ~/.claude/skills/strategic-compact/suggest-compact.sh" }]
       }
     ]
   }
@@ -126,6 +126,5 @@ Common sources of duplicate context:
 
 ## Related
 
-- [The Longform Guide](https://x.com/affaanmustafa/status/2014040193557471352) — Token optimization section
 - Memory persistence hooks — For state that survives compaction
-- `continuous-learning` skill — Extracts patterns before session ends
+- `continuous-learning-v2` skill — Extracts patterns before session ends

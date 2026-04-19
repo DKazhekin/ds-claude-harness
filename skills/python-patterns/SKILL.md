@@ -541,8 +541,8 @@ from fastapi import FastAPI
 from mypackage.models import User
 from mypackage.utils import format_name
 
-# Good: Use isort for automatic import sorting
-# pip install isort
+# Good: Use ruff for automatic import sorting (I rules)
+# pip install ruff && ruff check --select I --fix .
 ```
 
 ### __init__.py for Package Exports
@@ -620,13 +620,9 @@ result = buffer.getvalue()
 ### Essential Commands
 
 ```bash
-# Code formatting
-black .
-isort .
-
-# Linting
-ruff check .
-pylint mypackage/
+# Formatting + linting (ruff replaces black/isort/flake8/pylint for most cases)
+ruff format .
+ruff check --fix .
 
 # Type checking
 mypy .
@@ -639,7 +635,6 @@ bandit -r .
 
 # Dependency management
 pip-audit
-safety check
 ```
 
 ### pyproject.toml Configuration
@@ -648,7 +643,7 @@ safety check
 [project]
 name = "mypackage"
 version = "1.0.0"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 dependencies = [
     "requests>=2.31.0",
     "pydantic>=2.0.0",
@@ -656,23 +651,21 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.4.0",
-    "pytest-cov>=4.1.0",
-    "black>=23.0.0",
-    "ruff>=0.1.0",
-    "mypy>=1.5.0",
+    "pytest>=8.0.0",
+    "pytest-cov>=5.0.0",
+    "ruff>=0.3.0",
+    "mypy>=1.10.0",
 ]
-
-[tool.black]
-line-length = 88
-target-version = ['py39']
 
 [tool.ruff]
 line-length = 88
-select = ["E", "F", "I", "N", "W"]
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "SIM"]
 
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.11"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true

@@ -22,7 +22,7 @@ At least one of:
 - **firecrawl** — `firecrawl_search`, `firecrawl_scrape`, `firecrawl_crawl`
 - **exa** — `web_search_exa`, `web_search_advanced_exa`, `crawling_exa`
 
-Both together give the best coverage. Configure in `~/.claude.json` or `~/.codex/config.toml`.
+Both together give the best coverage. Configure in `.mcp.json` (project-scoped) or `~/.claude/settings.json` → `mcpServers` key (global), or `~/.codex/config.toml` for Codex.
 
 ## Workflow
 
@@ -56,7 +56,7 @@ firecrawl_search(query: "<sub-question keywords>", limit: 8)
 **With exa:**
 ```
 web_search_exa(query: "<sub-question keywords>", numResults: 8)
-web_search_advanced_exa(query: "<keywords>", numResults: 5, startPublishedDate: "2025-01-01")
+web_search_advanced_exa(query: "<keywords>", numResults: 5, startPublishedDate: "<ISO date ~12 months ago>")
 ```
 
 **Search strategy:**

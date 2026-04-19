@@ -151,13 +151,13 @@ def process(text: str, config: Config, tracker: CostTracker) -> tuple[Result, Co
     return parse_result(response), tracker
 ```
 
-## Pricing Reference (2025-2026)
+## Pricing Reference (2026)
 
 | Model | Input ($/1M tokens) | Output ($/1M tokens) | Relative Cost |
 |-------|---------------------|----------------------|---------------|
-| Haiku 4.5 | $0.80 | $4.00 | 1x |
-| Sonnet 4.6 | $3.00 | $15.00 | ~4x |
-| Opus 4.5 | $15.00 | $75.00 | ~19x |
+| Haiku 4.5 | $1.00 | $5.00 | 1x |
+| Sonnet 4.6 | $3.00 | $15.00 | ~3x |
+| Opus 4.7 | $15.00 | $75.00 | ~15x |
 
 ## Best Practices
 
