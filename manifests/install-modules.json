@@ -4,15 +4,19 @@
     {
       "id": "ds-core",
       "kind": "rules",
-      "description": "Rules (common/python/typescript), 13 curated agents, 1 slash command, platform configs, MCP catalog.",
+      "description": "Rules (common/python), 9 curated agents, platform config, MCP server catalog.",
       "paths": [
         "rules",
         "agents",
-        "commands",
         ".claude-plugin",
         "mcp-configs"
       ],
-      "targets": ["claude", "cursor", "antigravity", "codebuddy"],
+      "targets": [
+        "claude",
+        "cursor",
+        "antigravity",
+        "codebuddy"
+      ],
       "dependencies": [],
       "defaultInstall": true,
       "cost": "light",
@@ -21,14 +25,20 @@
     {
       "id": "ds-hooks",
       "kind": "hooks",
-      "description": "Runtime hook configs (11 curated hooks), hook scripts, and shared lib utilities.",
+      "description": "Runtime hook configs (2 hooks: destructive-command gate, quality-gate), hook scripts, and shared lib utilities.",
       "paths": [
-        "hooks",
         "scripts/hooks",
         "scripts/lib"
       ],
-      "targets": ["claude", "cursor", "opencode", "codebuddy"],
-      "dependencies": ["ds-core"],
+      "targets": [
+        "claude",
+        "cursor",
+        "opencode",
+        "codebuddy"
+      ],
+      "dependencies": [
+        "ds-core"
+      ],
       "defaultInstall": true,
       "cost": "medium",
       "stability": "stable"
@@ -36,92 +46,25 @@
     {
       "id": "ds-llm-skills",
       "kind": "skills",
-      "description": "LLM/agent/eval/security/compacting skills for DS censor and personal ML work.",
+      "description": "Curated skills actually in use: deep research with search MCPs, error analysis over predictions, scholarly-work evaluation.",
       "paths": [
-        "skills/agent-eval",
-        "skills/agent-harness-construction",
-        "skills/agent-introspection-debugging",
-        "skills/agentic-engineering",
-        "skills/autonomous-loops",
-        "skills/continuous-agent-loop",
-        "skills/iterative-retrieval",
-        "skills/prompt-optimizer",
-        "skills/strategic-compact",
-        "skills/continuous-learning-v2",
-        "skills/context-budget",
-        "skills/eval-harness",
-        "skills/gan-style-harness",
-        "skills/ai-regression-testing",
-        "skills/regex-vs-llm-structured-text",
-        "skills/gateguard",
-        "skills/security-review",
-        "skills/security-scan",
-        "skills/claude-api",
-        "skills/cost-aware-llm-pipeline",
-        "skills/mcp-server-patterns",
-        "skills/documentation-lookup",
-        "skills/coding-standards",
-        "skills/git-workflow"
+        "skills/deep-research",
+        "skills/error-discovery",
+        "skills/scholar-evaluation"
       ],
-      "targets": ["claude", "cursor", "antigravity", "codex", "opencode", "codebuddy"],
-      "dependencies": ["ds-core"],
+      "targets": [
+        "claude",
+        "cursor",
+        "antigravity",
+        "codex",
+        "opencode",
+        "codebuddy"
+      ],
+      "dependencies": [
+        "ds-core"
+      ],
       "defaultInstall": true,
       "cost": "medium",
-      "stability": "stable"
-    },
-    {
-      "id": "ds-python-ts",
-      "kind": "skills",
-      "description": "Python/PyTorch/TS testing and pattern skills for ML pipelines and agent code.",
-      "paths": [
-        "skills/python-testing",
-        "skills/python-patterns",
-        "skills/pytorch-patterns",
-        "skills/tdd-workflow"
-      ],
-      "targets": ["claude", "cursor", "antigravity", "codex", "opencode", "codebuddy"],
-      "dependencies": ["ds-core"],
-      "defaultInstall": true,
-      "cost": "light",
-      "stability": "stable"
-    },
-    {
-      "id": "ds-sql-read",
-      "kind": "skills",
-      "description": "Read-only SQL patterns (Postgres) for eval logs and dataset queries.",
-      "paths": [
-        "skills/postgres-patterns"
-      ],
-      "targets": ["claude", "cursor", "antigravity", "codex", "opencode", "codebuddy"],
-      "dependencies": ["ds-core"],
-      "defaultInstall": true,
-      "cost": "light",
-      "stability": "stable"
-    },
-    {
-      "id": "ds-db-full",
-      "kind": "skills",
-      "description": "Full DB authoring workflow: database migrations (ds-personal only).",
-      "paths": [
-        "skills/database-migrations"
-      ],
-      "targets": ["claude", "cursor", "antigravity", "codex", "opencode", "codebuddy"],
-      "dependencies": ["ds-sql-read"],
-      "defaultInstall": false,
-      "cost": "light",
-      "stability": "stable"
-    },
-    {
-      "id": "ds-research",
-      "kind": "skills",
-      "description": "Deep research skill for web/literature exploration (ds-personal only).",
-      "paths": [
-        "skills/deep-research"
-      ],
-      "targets": ["claude", "cursor", "antigravity", "codex", "opencode", "codebuddy"],
-      "dependencies": ["ds-core"],
-      "defaultInstall": false,
-      "cost": "light",
       "stability": "stable"
     }
   ]

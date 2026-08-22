@@ -2,33 +2,28 @@
   "mcpServers": {
     "context7": {
       "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp@latest"]
-    },
-    "sequential-thinking": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
-    },
-    "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
-      }
+      "args": [
+        "-y",
+        "@upstash/context7-mcp@latest"
+      ]
     },
     "exa-web-search": {
       "command": "npx",
-      "args": ["-y", "exa-mcp-server"],
+      "args": [
+        "-y",
+        "exa-mcp-server"
+      ],
       "env": {
         "EXA_API_KEY": "${EXA_API_KEY}"
       }
     },
-    "playwright": {
-      "command": "npx",
-      "args": ["-y", "@playwright/mcp", "--browser", "chrome"]
+    "keenable": {
+      "type": "http",
+      "url": "https://api.keenable.ai/mcp"
     },
-    "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "${HOME}/projects"]
+    "parallel": {
+      "type": "http",
+      "url": "https://search.parallel.ai/mcp"
     }
   }
 }

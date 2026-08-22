@@ -3,68 +3,21 @@
 
 const { isHookEnabled } = require('../lib/hook-flags');
 
-const { run: runBlockNoVerify } = require('./block-no-verify');
-const { run: runAutoTmuxDev } = require('./auto-tmux-dev');
-const { run: runTmuxReminder } = require('./pre-bash-tmux-reminder');
-const { run: runGitPushReminder } = require('./pre-bash-git-push-reminder');
-const { run: runCommitQuality } = require('./pre-bash-commit-quality');
 const { run: runGateGuard } = require('./gateguard-fact-force');
-const { run: runCommandLog } = require('./post-bash-command-log');
-const { run: runPrCreated } = require('./post-bash-pr-created');
-const { run: runBuildComplete } = require('./post-bash-build-complete');
 
 const MAX_STDIN = 1024 * 1024;
 
+// Only the destructive-command gate remains. Everything else that used to live here was
+// removed 2026-08-21: git protections are covered by permissions.deny in settings.json
+// (git commit / push / reset --hard / clean -fd / checkout -- / gh pr create|merge),
+// tmux helpers target dev servers this project does not run, and the post-bash hooks
+// (command log, cost tracker, pr-created, build-complete) were never invoked because no
+// PostToolUse matcher for Bash was ever registered.
 const PRE_BASH_HOOKS = [
-  {
-    id: 'pre:bash:block-no-verify',
-    profiles: 'minimal,standard,strict',
-    run: rawInput => runBlockNoVerify(rawInput),
-  },
-  {
-    id: 'pre:bash:auto-tmux-dev',
-    run: rawInput => runAutoTmuxDev(rawInput),
-  },
-  {
-    id: 'pre:bash:tmux-reminder',
-    profiles: 'strict',
-    run: rawInput => runTmuxReminder(rawInput),
-  },
-  {
-    id: 'pre:bash:git-push-reminder',
-    profiles: 'strict',
-    run: rawInput => runGitPushReminder(rawInput),
-  },
-  {
-    id: 'pre:bash:commit-quality',
-    profiles: 'strict',
-    run: rawInput => runCommitQuality(rawInput),
-  },
   {
     id: 'pre:bash:gateguard-fact-force',
     profiles: 'standard,strict',
     run: rawInput => runGateGuard(rawInput),
-  },
-];
-
-const POST_BASH_HOOKS = [
-  {
-    id: 'post:bash:command-log-audit',
-    run: rawInput => runCommandLog(rawInput, 'audit'),
-  },
-  {
-    id: 'post:bash:command-log-cost',
-    run: rawInput => runCommandLog(rawInput, 'cost'),
-  },
-  {
-    id: 'post:bash:pr-created',
-    profiles: 'standard,strict',
-    run: rawInput => runPrCreated(rawInput),
-  },
-  {
-    id: 'post:bash:build-complete',
-    profiles: 'standard,strict',
-    run: rawInput => runBuildComplete(rawInput),
   },
 ];
 
@@ -143,17 +96,9 @@ function runPreBash(rawInput) {
   return runHooks(rawInput, PRE_BASH_HOOKS);
 }
 
-function runPostBash(rawInput) {
-  return runHooks(rawInput, POST_BASH_HOOKS);
-}
-
 async function main() {
-  const mode = process.argv[2];
   const raw = await readStdinRaw();
-
-  const result = mode === 'post'
-    ? runPostBash(raw)
-    : runPreBash(raw);
+  const result = runPreBash(raw);
 
   if (result.stderr) {
     process.stderr.write(result.stderr);
@@ -171,7 +116,5 @@ if (require.main === module) {
 
 module.exports = {
   PRE_BASH_HOOKS,
-  POST_BASH_HOOKS,
   runPreBash,
-  runPostBash,
 };

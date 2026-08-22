@@ -30,8 +30,6 @@ The Feature Implementation Workflow describes the development pipeline: research
 3. **Code Review**
    - Run `python-reviewer` and `silent-failure-hunter` in parallel on the diff
    - Use `pr-test-analyzer` when evaluating whether the PR's tests catch real regressions
-   - Use `database-reviewer` on SQL / migration diffs
-   - Pair with the `security-review` skill when the diff touches auth, user input, secrets, or crypto
    - Address CRITICAL and HIGH issues; fix MEDIUM when possible
 
 4. **Commit & Push**

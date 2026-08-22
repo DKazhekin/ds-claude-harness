@@ -27,7 +27,7 @@ node scripts/ecc.js install --profile ds-personal --target claude
 
 # Runtime hook tuning
 export ECC_HOOK_PROFILE=standard
-export ECC_DISABLED_HOOKS="stop:format-typecheck"   # example
+export ECC_DISABLED_HOOKS="post:quality-gate"   # example
 ```
 
 ## Workflow
@@ -39,9 +39,7 @@ override them. Feature flow:
    implementations over net-new code.
 2. **Plan** — use `planner` agent before non-trivial work; persist via Plan mode.
 3. **TDD** — `tdd-guide` agent; RED → GREEN → REFACTOR; 80%+ coverage.
-4. **Review** — `python-reviewer` / `typescript-reviewer` / `security-reviewer`
-   immediately after changes.
-5. **Commit** — conventional messages in English. Never auto-commit (blocked by
+4. **Commit** — conventional messages in English. Never auto-commit (blocked by
    `.claude/settings.json`).
 
 ## Key agents
@@ -49,45 +47,20 @@ override them. Feature flow:
 | Agent | Use |
 |-------|-----|
 | `pytorch-build-resolver` | Tensor/CUDA/gradient issues |
-| `python-reviewer` / `typescript-reviewer` | Language-level review |
-| `database-reviewer` | Postgres/ClickHouse SQL review |
-| `security-reviewer` | OWASP, secrets, injection |
 | `silent-failure-hunter` | Swallowed errors in inference |
-| `gan-planner` / `gan-generator` / `gan-evaluator` | Adversarial eval loop |
 | `harness-optimizer` | Tune this harness itself |
 | `tdd-guide` / `pr-test-analyzer` | Test-first discipline |
 
 ## Key skills
 
-- **Agents**: `agent-eval`, `agent-harness-construction`, `autonomous-loops`,
-  `continuous-agent-loop`, `iterative-retrieval`, `prompt-optimizer`.
-- **Context**: `strategic-compact`, `context-budget`, `continuous-learning-v2`.
-- **Eval**: `eval-harness`, `gan-style-harness`, `ai-regression-testing`,
-  `regex-vs-llm-structured-text`.
-- **Safety**: `gateguard`, `safety-guard`, `security-review`, `security-scan`,
-  `skill-comply`.
-- **LLM API**: `claude-api`, `cost-aware-llm-pipeline`.
-- **Python/ML**: `python-patterns`, `python-testing`, `pytorch-patterns`,
-  `tdd-workflow`.
-- **Data**: `clickhouse-io`, `postgres-patterns`, `database-migrations`
-  (personal only).
+Three, deliberately. A long skill list stops routing — the previous set of 31 never fired.
 
-## Smart compacting
+- `deep-research` — multi-source web research with the keenable / parallel / exa MCPs.
+- `error-discovery` — error analysis over a prediction set: review UI, diverse sampling,
+  clustering of failure modes.
+- `scholar-evaluation` — judging a paper's methodology and evidence quality against a rubric.
 
-| Layer | Artifact |
-|-------|----------|
-| Skill | `strategic-compact` — what to keep vs. compress |
-| Skill | `context-budget` — audit current token spend |
-| Hook | `pre:edit-write:suggest-compact` — nudges `/compact` when full |
-| Hook | `pre:compact` — serializes state to `.claude/ecc/session-state.json` |
-| Hook | `session:start` — restores working set after compact/restart |
-
-## Continuous learning
-
-Always on. `pre:observe:continuous-learning` + `post:observe:continuous-learning`
-hooks (async, 10s) stream tool usage into
-`skills/continuous-learning-v2/data/`. `stop:evaluate-session` scores the
-session and distills instincts. Check current state via `/instinct-status`.
+`claude-api` is a Claude Code built-in, not part of this harness.
 
 ## Git safety
 
@@ -98,14 +71,13 @@ denies the patterns outright — Claude Code will ask before running them.
 ## Testing
 
 ```bash
-npm test            # unicode-safety + validators + unit tests
-npm run validate    # validators only
+npm run status      # show installed harness components
+npm run doctor      # diagnose install state
 ```
 
-## MCP servers (6)
+## MCP servers (4)
 
-`context7`, `sequential-thinking`, `github`, `exa-web-search`, `playwright`,
-`filesystem`. See `.mcp.json`.
+`context7`, `exa-web-search`, `keenable`, `parallel`. See `.mcp.json`.
 
 ## Stack conventions
 

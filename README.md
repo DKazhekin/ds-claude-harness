@@ -8,8 +8,8 @@ for data science work on LLM moderation and agent evaluation.
 
 - **Node.js** ≥ 18 (`node --version`)
 - **Claude Code CLI** (`claude --version`) — run `claude` once so it creates `~/.claude/settings.json`
-- `**jq`** for the post-install merges — `brew install jq` on macOS
-- MCP env vars in `~/.zshrc`: `GITHUB_PERSONAL_ACCESS_TOKEN`, `EXA_API_KEY` (see step 2)
+- **`jq`** for the post-install merges — `brew install jq` on macOS
+- MCP env var in `~/.zshrc`: `EXA_API_KEY` (see step 2)
 
 ## Quick start
 
@@ -23,9 +23,9 @@ node scripts/ecc.js install --profile ds-work --target claude
 node scripts/ecc.js install --profile ds-personal --target claude
 ```
 
-The ECC installer copies agents, skills, commands, rules, and hook scripts into
+The ECC installer copies agents, skills, rules, and hook scripts into
 `~/.claude/`. Hooks, MCP servers, and `permissions.deny` are **not** activated
-by the installer — Claude Code does not auto-discover `~/.claude/hooks/hooks.json`
+by the installer — Claude Code does not auto-discover hook configs
 or `.claude/settings.json` inside a source repo. Run the post-install steps below.
 
 ## Post-install steps
@@ -33,15 +33,14 @@ or `.claude/settings.json` inside a source repo. Run the post-install steps belo
 ### 1. Activate hooks
 
 Claude Code only loads hooks from `~/.claude/settings.json` (user scope) or from
-an installed plugin. Merge the hook config that ECC wrote to
-`~/.claude/hooks/hooks.json` into user settings:
+an installed plugin. Merge the hook config from this repo's
+`hooks/hooks.json` into user settings (run from the clone root):
 
 ```bash
 jq -s '.[0] * {hooks: .[1].hooks}' \
-  ~/.claude/settings.json ~/.claude/hooks/hooks.json \
+  ~/.claude/settings.json hooks/hooks.json \
   > ~/.claude/settings.json.tmp \
-  && mv ~/.claude/settings.json.tmp ~/.claude/settings.json \
-  && rm ~/.claude/hooks/hooks.json
+  && mv ~/.claude/settings.json.tmp ~/.claude/settings.json
 ```
 
 The obfuscated bootstrap preamble inside each hook command resolves
@@ -54,22 +53,33 @@ MCP servers are stored in `~/.claude.json`, not `settings.json`. Use
 `claude mcp add` at user scope for always-on servers; keep opt-in servers
 in per-project `.mcp.json` files.
 
-```bash
-# Always-on at user scope
-claude mcp add context7            --scope user -- npx -y @upstash/context7-mcp@latest
-claude mcp add sequential-thinking --scope user -- npx -y @modelcontextprotocol/server-sequential-thinking
-claude mcp add github              --scope user --env GITHUB_PERSONAL_ACCESS_TOKEN=$GITHUB_PERSONAL_ACCESS_TOKEN -- npx -y @modelcontextprotocol/server-github
-claude mcp add exa-web-search      --scope user --env EXA_API_KEY=$EXA_API_KEY -- npx -y exa-mcp-server
-claude mcp add filesystem          --scope user -- npx -y @modelcontextprotocol/server-filesystem "$HOME/projects"
+> **Load secrets first.** `--env KEY=$VAR` is expanded by your shell at the moment
+> you type it. In a shell where the variable is not exported yet it expands to an
+> empty string, and an empty value in a server's `env` block *overrides* the
+> inherited process environment — the server then fails with 401 and nothing
+> reports it until a tool is actually called. Run `source ~/.config/secrets.env`
+> (or open a fresh login shell) before the commands below, and verify afterwards
+> that the values in `~/.claude.json` are non-empty.
 
-# Project-scoped (playwright) — copy .mcp.json into projects that need it
-cp .mcp.json /path/to/some-project/
+```bash
+source ~/.config/secrets.env   # must come first, see the warning above
+
+# Library docs
+claude mcp add context7 --scope user -- npx -y @upstash/context7-mcp@latest
+
+# Web search — exa needs a key, the other two work anonymously
+claude mcp add exa-web-search --scope user --env EXA_API_KEY=$EXA_API_KEY -- npx -y exa-mcp-server
+claude mcp add keenable --transport http https://api.keenable.ai/mcp     --scope user
+claude mcp add parallel --transport http https://search.parallel.ai/mcp  --scope user
 ```
+
+Deliberately **not** installed, after measuring actual usage: `sequential-thinking`
+(0 calls in two months), `github` (duplicates the `gh` CLI, which the rules use anyway),
+`filesystem` (scoped to `~/projects` while the work lives in `~/Downloads`).
 
 Required env variables (put in `~/.zshrc` before starting Claude Code):
 
 ```bash
-export GITHUB_PERSONAL_ACCESS_TOKEN=ghp_...
 export EXA_API_KEY=...
 ```
 
@@ -98,59 +108,30 @@ jq '.permissions.deny | map(select(startswith("Bash(git commit") or startswith("
   ~/.claude/settings.json                        # git-safety applied
 ```
 
-### 5. Continuous-learning storage (one-time, per machine)
+### 5. Removed subsystems
 
-Claude Code 2.1.x blocks sub-Claude `Write` calls on any path starting with
-`~/.claude/` in headless (`--print`) mode. The `continuous-learning-v2`
-observer writes instincts into `~/.claude/homunculus/projects/<id>/instincts/`,
-which is exactly such a path. Without the workaround below, the observer
-collects observations but never produces instinct files.
-
-Fix: move the homunculus storage out of `~/.claude/` and symlink it back.
-Scripts auto-resolve through the symlink via `readlink -f`.
-
-```bash
-# Stop the observer daemon if running
-bash ~/.claude/skills/continuous-learning-v2/agents/start-observer.sh stop
-
-# Migrate storage out of ~/.claude/ (idempotent — safe to re-run)
-if test -L "$HOME/.claude/homunculus"; then
-  echo "already migrated"
-elif test -d "$HOME/.claude/homunculus" && ! test -e "$HOME/homunculus"; then
-  mv "$HOME/.claude/homunculus" "$HOME/homunculus"
-  ln -s "$HOME/homunculus" "$HOME/.claude/homunculus"
-elif ! test -e "$HOME/.claude/homunculus" && ! test -e "$HOME/homunculus"; then
-  mkdir -p "$HOME/homunculus"
-  ln -s "$HOME/homunculus" "$HOME/.claude/homunculus"
-else
-  echo "conflict: both ~/.claude/homunculus and ~/homunculus exist — resolve manually"
-fi
-
-# Restart daemon (picks up resolved path)
-bash ~/.claude/skills/continuous-learning-v2/agents/start-observer.sh start
-```
-
-Verify: within one analysis cycle (~~5 min, or force with `kill -USR1 $(cat ~/homunculus/projects/*/.observer.pid)`), `.md` files should appear under
-`~~/homunculus/projects//instincts/personal/`. Check` /instinct-status`
-inside Claude Code to see extracted insights.
+The instinct observer (`continuous-learning-v2`) and its three hooks were removed on
+2026-08-21: the observer exited immediately on every launch since 31 July and produced
+zero instincts across ten projects. `~/homunculus` and the `~/.claude/homunculus`
+symlink are left in place — they hold old logs and nothing reads them any more.
 
 ## What's inside
 
 
 | Component   | Count                                                                  |
 | ----------- | ---------------------------------------------------------------------- |
-| Agents      | 13 — pytorch/python reviewers, GAN loop, planners, code explorers      |
-| Skills      | 31 — agent eval, strategic compact, PyTorch, LLM cost, security        |
-| Commands    | 1 — `/instinct-status`                                                 |
-| Hooks       | 15 — safety, quality-gate, smart compacting, continuous learning       |
-| MCP servers | 6 — context7, sequential-thinking, github, exa, playwright, filesystem |
+| Agents      | 9 — pytorch/python reviewers, planners, code explorers                 |
+| Skills      | 3 — deep research, error analysis, scholarly evaluation                |
+| Commands    | 0                                                                      |
+| Hooks       | 2 — destructive-command gate, quality-gate (ruff format)               |
+| MCP servers | 4 — context7, exa, keenable, parallel                                  |
 
 
 ## Profiles
 
-- `**ds-work**` — work laptop. Read-only SQL, LLM censor-module stack.
-- `**ds-personal**` — personal laptop. Adds `database-migrations` and
-`deep-research`.
+- **ds-work** — work laptop. Read-only SQL, LLM censor-module stack.
+- **ds-personal** — personal laptop. Same module set; kept separate for
+machine-specific overrides.
 
 ## Git safety
 
@@ -168,11 +149,10 @@ npm run uninstall   # remove harness from ~/.claude
 ## Layout
 
 ```
-agents/      13 specialized subagents
-skills/      31 workflow + domain skills
-commands/    1 slash command (/instinct-status)
-hooks/       15 lifecycle hooks (hooks.json)
-rules/       common + python + typescript
+agents/      9 specialized subagents
+skills/      3 curated skills
+hooks/       2 lifecycle hooks (hooks.json)
+rules/       common + python
 manifests/   install-profiles.json, install-modules.json
 mcp-configs/ mcp-servers.json
 scripts/     ECC install system (CommonJS)
@@ -190,63 +170,9 @@ git fetch upstream
 # review scripts/curate.js whitelist, re-run, merge manually
 ```
 
-## Continuous learning
-
-`continuous-learning-v2` passively collects session patterns and surfaces
-them as instinct files. Two-layer model: **raw instincts** (auto-written by
-the observer) → **learned skills** (manually promoted by you).
-
-### Storage
-
-```
-~/homunculus/                              # symlinked from ~/.claude/homunculus
-├── projects/<id>/
-│   ├── instincts/personal/    ← raw *.md from observer
-│   ├── instincts/inherited/   ← copied from other projects
-│   ├── evolved/{skills,agents,commands}/  ← CLI-generated drafts
-│   └── observations.jsonl
-└── instincts/                 ← global scope (cross-project)
-```
-
-### View
-
-```bash
-/instinct-status                                       # grouped by domain
-cat ~/homunculus/projects/<id>/instincts/personal/*.md # raw bodies
-```
-
-### Workflow (3 levels)
-
-1. **Daily** — `/instinct-status` to skim recent patterns.
-2. **Weekly** — evolve mature ones into skill/agent drafts:
-  ```bash
-   python3 ~/.claude/skills/continuous-learning-v2/scripts/instinct-cli.py evolve --generate
-  ```
-   Drafts appear in `~/homunculus/projects/<id>/evolved/`.
-3. **Monthly** — promote what you actually use:
-  - Cross-project? `instinct-cli.py promote <id>` (project → global).
-  - Battle-tested? Copy into a real skill:
-    ```bash
-    mkdir -p ~/.claude/skills/learned/<name>
-    cp ~/homunculus/projects/<id>/evolved/skills/<name>.md \
-       ~/.claude/skills/learned/<name>/SKILL.md
-    # Edit: tighten trigger, add examples, remove auto-generated boilerplate
-    ```
-  - Want it to survive `ecc.js install` and sync across machines?
-  Put the finished skill in the repo: `skills/<name>/SKILL.md`, commit.
-
-### Confidence threshold
-
-Observer assigns 0.3–0.85 based on frequency. Rule of thumb:
-
-- `< 0.5` — noise, let it expire (`instinct-cli.py prune`).
-- `0.5–0.7` — watch, don't act.
-- `≥ 0.7` — candidate for `evolve`.
-- `≥ 0.85` — candidate for `promote` to global or `learned/`.
-
 ## Agent pipelines
 
-How the 13 subagents typically compose. Subagents receive **only** their
+How the 9 subagents typically compose. Subagents receive **only** their
 prompt string — no main conversation, no other agents' outputs. The
 orchestrator must package each prior result into the next prompt.
 
@@ -254,7 +180,6 @@ orchestrator must package each prior result into the next prompt.
 |---|---|
 | Feature in unfamiliar area | `code-explorer → planner → code-architect → tdd-guide` |
 | Feature in familiar area | `code-architect → tdd-guide` |
-| Greenfield UI from brief | `gan-planner → gan-generator ⇄ gan-evaluator` (loop, score ≥ 7) |
 | PR review (parallel) | `python-reviewer ∥ silent-failure-hunter` on same diff |
 
 **Artifact pattern for ≥3-step pipelines** — each agent reads/writes a file:
@@ -292,27 +217,7 @@ Two classes of state: **live channels** (auto-loaded every session) and
 
 | Store | Path | Writer |
 |---|---|---|
-| Observations | `~/homunculus/projects/<hash>/observations.jsonl` | `pre/post:observe` hooks |
-| Raw instincts | `~/homunculus/projects/<hash>/instincts/personal/*.md` | observer daemon |
-| Evolved drafts | `~/homunculus/projects/<hash>/evolved/{skills,agents,commands}/` | `instinct-cli.py evolve --generate` |
-| Global instincts | `~/homunculus/instincts/` | `instinct-cli.py promote` |
 | GateGuard state | `~/.gateguard/state-<session>.json` | fact-force hook |
-
-### Pipeline from observation to live context
-
-```
-tool call  →  observations.jsonl  →  instincts/personal/
-              (auto)                   (observer, auto, every 5 min)
-  →  evolved/                     →  ~/.claude/skills/learned/<name>/SKILL.md
-     (instinct-cli.py evolve)        (manual copy; survives install if also in repo)
-```
-
-**Auto-memory bypasses this pipeline** — Claude writes it directly during
-a session and it loads automatically next time.
-
-**Key rule**: to influence future context reliably, write auto-memory or
-edit a rule/skill/agent. Observer → instinct pipeline surfaces patterns
-but always needs a manual promotion step.
 
 ## License
 

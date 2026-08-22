@@ -39,4 +39,3 @@ class Point(NamedTuple):
 
 ## Reference
 
-See skill: `python-patterns` for comprehensive Python idioms and patterns.

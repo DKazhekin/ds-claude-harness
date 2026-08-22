@@ -1,9 +1,8 @@
 /**
- * Shared formatter resolution utilities with caching.
+ * Formatter resolution utilities with caching.
  *
- * Extracts project-root discovery, formatter detection, and binary
- * resolution into a single module so that post-edit-format.js and
- * quality-gate.js avoid duplicating work and filesystem lookups.
+ * Provides project-root discovery, formatter detection, and binary
+ * resolution as a single module. Sole consumer: quality-gate.js.
  */
 
 'use strict';

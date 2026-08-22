@@ -38,8 +38,7 @@ Before marking code complete:
 
 ## Security Review Triggers
 
-**STOP and run the `security-review` skill (plus `python-reviewer` for
-bandit coverage) when the diff touches:**
+**STOP and run `python-reviewer` (bandit coverage) when the diff touches:**
 
 - Authentication or authorization code
 - User input handling
@@ -67,9 +66,6 @@ Run reviewers in parallel on the same diff:
 | **python-reviewer** | PEP 8, type hints, Pythonic idioms, bandit security |
 | **silent-failure-hunter** | Swallowed exceptions, bad fallbacks, lost stack traces (language-agnostic) |
 | **pr-test-analyzer** | Test coverage quality, behavioral coverage, real-bug prevention |
-| **database-reviewer** | PostgreSQL query / schema / migration review |
-
-For security pair them with the `security-review` skill.
 
 ## Review Workflow
 

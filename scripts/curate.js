@@ -18,11 +18,7 @@ const DEST = path.resolve(__dirname, '..');
 const AGENTS = [
   'pytorch-build-resolver',
   'python-reviewer',
-  'database-reviewer',
   'silent-failure-hunter',
-  'gan-planner',
-  'gan-generator',
-  'gan-evaluator',
   'harness-optimizer',
   'tdd-guide',
   'pr-test-analyzer',
@@ -32,42 +28,12 @@ const AGENTS = [
 ];
 
 const SKILLS = [
-  'agent-eval',
-  'agent-harness-construction',
-  'agent-introspection-debugging',
-  'agentic-engineering',
-  'autonomous-loops',
-  'continuous-agent-loop',
-  'iterative-retrieval',
-  'prompt-optimizer',
-  'strategic-compact',
-  'continuous-learning-v2',
-  'eval-harness',
-  'gan-style-harness',
-  'ai-regression-testing',
-  'regex-vs-llm-structured-text',
-  'gateguard',
-  'security-review',
-  'security-scan',
-  'claude-api',
-  'cost-aware-llm-pipeline',
-  'python-testing',
-  'python-patterns',
-  'pytorch-patterns',
-  'tdd-workflow',
-  'postgres-patterns',
-  'database-migrations',
-  'coding-standards',
-  'git-workflow',
-  'context-budget',
-  'documentation-lookup',
   'deep-research',
-  'mcp-server-patterns',
 ];
 
-const COMMANDS = ['instinct-status'];
+const COMMANDS = []; // no commands curated from upstream
 
-const RULE_DIRS = ['common', 'python', 'typescript'];
+const RULE_DIRS = ['common', 'python'];
 
 const TOP_SCRIPTS = [
   'ecc.js',

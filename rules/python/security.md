@@ -27,5 +27,4 @@ api_key = os.environ["OPENAI_API_KEY"]  # Raises KeyError if missing
 
 ## Reference
 
-Run the `security-review` skill for OWASP-style triage. Python CWE
-coverage comes from `bandit` via the `python-reviewer` agent.
+Python CWE coverage comes from `bandit` via the `python-reviewer` agent.

@@ -8,10 +8,12 @@
  *
  * The act of investigation creates awareness that self-evaluation never did.
  *
- * Gates:
- *   - Edit/Write: list importers, affected API, verify data schemas, quote instruction
- *   - Bash (destructive): list targets, rollback plan, quote instruction
- *   - Bash (routine): quote current instruction (once per session)
+ * Gates (trimmed 2026-08-21 — see rules/common/hooks.md):
+ *   - Bash (destructive): a five-point deletion checkpoint, then the same command passes
+ *     and is appended to ~/.claude/deletions.log
+ *   - Bash (routine): removed — it demanded a quote on the first command of every
+ *     session and taught nothing
+ *   - Edit/Write: still implemented below, but no longer registered as a hook
  *
  * Compatible with run-with-flags.js via module.exports.run().
  * Cross-platform (Windows, macOS, Linux).
@@ -289,25 +291,32 @@ function writeGateMsg(filePath) {
 
 function destructiveBashMsg() {
   return [
-    '[Fact-Forcing Gate]',
+    '[Deletion Checkpoint]',
     '',
-    'Destructive command detected. Before running, present:',
+    'Answer these in your reply, then retry the exact same command:',
     '',
-    '1. List all files/data this command will modify or delete',
-    '2. Write a one-line rollback procedure',
-    '3. Quote the user\'s current instruction verbatim',
+    '1. WHAT, resolved — the actual list, not the glob or the directory name.',
+    '2. WHO REFERENCES IT — grep first. Hooks, manifests and configs point at files',
+    '   that look unused.',
+    '3. WHY NOW — whose request, and does it need deletion rather than a move?',
     '',
-    'Present the facts, then retry the same operation.'
+    'Editing the command starts a new checkpoint.'
   ].join('\n');
 }
 
-function routineBashMsg() {
-  return [
-    '[Fact-Forcing Gate]',
-    '',
-    'Quote the user\'s current instruction verbatim.',
-    'Then retry the same operation.'
-  ].join('\n');
+// --- Deletion journal ---
+
+// Appends every destructive command that actually ran, so deletions leave a trace
+// outside the conversation. Never throws: logging must not block the command.
+function logDeletion(command) {
+  try {
+    const home = process.env.HOME || process.env.USERPROFILE || '/tmp';
+    const logPath = path.join(home, '.claude', 'deletions.log');
+    const flat = String(command).replace(/\s+/g, ' ').trim().slice(0, 500);
+    fs.appendFileSync(logPath, `[${new Date().toISOString()}] ${flat}\n`, 'utf8');
+  } catch {
+    // ignore
+  }
 }
 
 // --- Deny helper ---
@@ -382,14 +391,11 @@ function run(rawInput) {
         markChecked(key);
         return denyResult(destructiveBashMsg());
       }
+      logDeletion(command);
       return rawInput; // allow retry after facts presented
     }
 
-    if (!isChecked(ROUTINE_BASH_SESSION_KEY)) {
-      markChecked(ROUTINE_BASH_SESSION_KEY);
-      return denyResult(routineBashMsg());
-    }
-
+    // Routine bash commands pass through — the gate covers destructive commands only.
     return rawInput; // allow
   }
 

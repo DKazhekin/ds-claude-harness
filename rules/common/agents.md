@@ -20,21 +20,12 @@ Located in `~/.claude/agents/`:
 | `python-reviewer` | PEP 8, type hints, bandit, framework issues | On `git diff` after Python edits |
 | `silent-failure-hunter` | Swallowed exceptions, bad fallbacks, lost stack traces | Every PR (language-agnostic) |
 | `pr-test-analyzer` | Test coverage quality, behavioral coverage, real-bug prevention | Evaluating whether PR's tests are meaningful |
-| `database-reviewer` | PostgreSQL query / schema / migration review | SQL, migrations, schema design |
 
 ### ML-specific
 
 | Agent | Purpose | When to Use |
 |-------|---------|-------------|
 | `pytorch-build-resolver` | Tensor shape, CUDA, DataLoader, AMP, autograd fixes | PyTorch training / inference crashes |
-
-### GAN-harness triplet (greenfield UI from a one-line brief)
-
-| Agent | Purpose |
-|-------|---------|
-| `gan-planner` | Expand brief into `spec.md` + eval rubric |
-| `gan-generator` | Implement features, run dev server, commit per iteration |
-| `gan-evaluator` | Playwright-test the live app, score, write feedback files |
 
 ### Meta
 
@@ -53,7 +44,6 @@ No user prompt needed — spawn automatically when the situation matches:
 | New feature or bug fix with tests | `tdd-guide` |
 | PyTorch crash with traceback | `pytorch-build-resolver` |
 | PR review on Python diff | `python-reviewer` + `silent-failure-hunter` (parallel) |
-| Greenfield UI from a brief | `gan-planner` → `gan-generator` ⇄ `gan-evaluator` |
 
 ## Parallel Task Execution
 
@@ -78,7 +68,6 @@ same input and merge their outputs:
 - `python-reviewer` — language quality
 - `silent-failure-hunter` — error-handling correctness
 - `pr-test-analyzer` — test coverage meaningfulness
-- `security-review` skill — security triage
 
 ## Context Flow Between Subagents
 

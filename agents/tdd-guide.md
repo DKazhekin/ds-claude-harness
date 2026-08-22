@@ -75,8 +75,6 @@ Remove duplication, improve names, optimize -- tests must stay green.
 - Assertions are specific and meaningful
 - Coverage is 80%+
 
-For detailed mocking patterns and framework-specific examples, see `skill: tdd-workflow`.
-
 ## v1.8 Eval-Driven TDD Addendum
 
 Integrate eval-driven development into TDD flow:
