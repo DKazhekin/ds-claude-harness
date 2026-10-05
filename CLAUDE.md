@@ -6,10 +6,9 @@ tuned for LLM moderation, agent evaluation, and PyTorch workflows.
 
 ## Scope
 
-- **Work profile (`ds-work`)** — LLM censor development, SQL read-only for
-  evals/logs, TypeScript agents, Python/PyTorch pipelines.
-- **Personal profile (`ds-personal`)** — everything in `ds-work` plus full DB
-  stack (migrations) and deep-research skills.
+- One harness, one machine, one `default` profile: LLM censor
+  development, evals/logs analysis, Python/PyTorch pipelines, deep-research
+  skills. The former ds-work / ds-personal split was merged on 2026-08-22.
 
 This is a personal helper, **not** a regulated product. No guardrails/governance
 layer — just curated agents, skills, and hooks.
@@ -17,13 +16,9 @@ layer — just curated agents, skills, and hooks.
 ## Install
 
 ```bash
-# Work laptop (SQL read-only guidance)
 npm install
-node scripts/ecc.js install --profile ds-work --target claude --dry-run --json
-node scripts/ecc.js install --profile ds-work --target claude
-
-# Personal laptop (full DB + research)
-node scripts/ecc.js install --profile ds-personal --target claude
+node scripts/ecc.js install --profile default --target claude --dry-run --json
+node scripts/ecc.js install --profile default --target claude
 
 # Runtime hook tuning
 export ECC_HOOK_PROFILE=standard

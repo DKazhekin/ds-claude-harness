@@ -164,6 +164,32 @@ Each agent searches, reads sources, and returns findings. The main session synth
 5. **No hallucination.** If you don't know, say "insufficient data found."
 6. **Separate fact from inference.** Label estimates, projections, and opinions clearly.
 
+## Reference Sources
+
+These define the bar for source quality and format. When research touches ML/LLM
+topics, prefer sources of this caliber and actively hunt for more in the same
+style: mechanism-first, honest about limits, reproducible details, clean visual
+presentation.
+
+| Source | Format | Why it sets the bar |
+|---|---|---|
+| [Digital Signals Theory](https://brianmcfee.net/dstbook-site/content/intro.html) — Brian McFee | interactive web textbook | Teaches from examples with runnable notebook code |
+| [Inside GPU matmul](https://www.aleksagordic.com/blog/matmul) — Aleksa Gordic | long-form deep-dive | Mechanism-first walk from naive kernel to near-peak throughput |
+| [How to Scale Your Model](https://jax-ml.github.io/scaling-book/index) — Google DeepMind | systems web book | First-principles arithmetic for scaling LLMs |
+| [Model Evaluation, Model Selection, and Algorithm Selection](https://arxiv.org/abs/1811.12808) — Sebastian Raschka | methodology survey | Evaluation methodology with statistical grounding, not folklore |
+| [The Multi-Armed Bandit Problem](https://lilianweng.github.io/posts/2018-01-23-multi-armed-bandit/) — Lilian Weng | long-form explainer | Precise math plus intuition plus clean figures |
+| [Context reuse under the hood of Claude Code](https://blog.lmcache.ai/en/2025/12/23/context-engineering-reuse-pattern-under-the-hood-of-claude-code/) — LMCache | systems blog post | Reverse-engineers real production behavior instead of speculating |
+| [DroPE: Dropping Positional Embeddings](https://arxiv.org/abs/2512.12167) — Sakana AI | research paper | Three observations, one simple method, broad empirical check |
+| [The Annotated Transformer](https://nlp.seas.harvard.edu/annotated-transformer/) — Harvard NLP | annotated paper | Landmark paper annotated line-by-line with executable code |
+| [Deep Learning Tuning Playbook](https://github.com/google-research/tuning_playbook) — Google Research | methodology playbook | Systematic experimental protocol for tuning |
+| [The Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/) — Jay Alammar | visual explainer | Step-by-step visual decomposition of one architecture |
+| [colah.github.io](https://colah.github.io) — Chris Olah | blog | Origin of the visual-explainer genre |
+| [GPU Glossary](https://modal.com/gpu-glossary) — Modal | linked glossary | Coherent reference covering the full GPU stack |
+| [PyTorch internals](https://blog.ezyang.com/2019/05/pytorch-internals/) — Edward Yang | core-dev deep-dive | Strides, dispatch, autograd explained by a maintainer |
+| [Making Deep Learning Go Brrrr](https://horace.io/brrr_intro.html) — Horace He | perf essay | Compute/memory/overhead reasoning from first principles |
+| [RLHF Book](https://rlhfbook.com) — Nathan Lambert | living web book | Full post-training pipeline in one maintained volume |
+| [The Ultra-Scale Playbook](https://huggingface.co/spaces/nanotron/ultrascale-playbook) — HF nanotron | systems web book | GPU-parallelism counterpart to the scaling book |
+
 ## Examples
 
 ```

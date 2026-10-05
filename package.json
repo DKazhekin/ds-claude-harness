@@ -25,10 +25,8 @@
     "ecc-install": "scripts/install-apply.js"
   },
   "scripts": {
-    "install:work": "node scripts/ecc.js install --profile ds-work --target claude",
-    "install:personal": "node scripts/ecc.js install --profile ds-personal --target claude",
-    "install:work:dry": "node scripts/ecc.js install --profile ds-work --target claude --dry-run --json",
-    "install:personal:dry": "node scripts/ecc.js install --profile ds-personal --target claude --dry-run --json",
+    "install": "node scripts/ecc.js install --profile default --target claude",
+    "install:dry": "node scripts/ecc.js install --profile default --target claude --dry-run --json",
     "uninstall": "node scripts/ecc.js uninstall --target claude",
     "status": "node scripts/ecc.js status --target claude",
     "doctor": "node scripts/ecc.js doctor"

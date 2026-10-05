@@ -1,16 +1,8 @@
 {
   "version": 1,
   "profiles": {
-    "ds-work": {
-      "description": "DS work harness: LLM censor development. Rules, agents, hooks, and three curated skills.",
-      "modules": [
-        "ds-core",
-        "ds-hooks",
-        "ds-llm-skills"
-      ]
-    },
-    "ds-personal": {
-      "description": "DS personal harness: same set as ds-work; kept separate for machine-specific overrides.",
+    "default": {
+      "description": "The single DS harness profile: rules, agents, hooks, and three curated skills. Same on every machine.",
       "modules": [
         "ds-core",
         "ds-hooks",

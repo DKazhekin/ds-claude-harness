@@ -16,11 +16,8 @@ for data science work on LLM moderation and agent evaluation.
 ```bash
 npm install
 
-# Work laptop — LLM censor dev, SQL read-only
-node scripts/ecc.js install --profile ds-work --target claude
-
-# Personal laptop — full DB stack + research APIs
-node scripts/ecc.js install --profile ds-personal --target claude
+# Same command on every machine
+node scripts/ecc.js install --profile default --target claude
 ```
 
 The ECC installer copies agents, skills, rules, and hook scripts into
@@ -129,9 +126,9 @@ symlink are left in place — they hold old logs and nothing reads them any more
 
 ## Profiles
 
-- **ds-work** — work laptop. Read-only SQL, LLM censor-module stack.
-- **ds-personal** — personal laptop. Same module set; kept separate for
-machine-specific overrides.
+- **default** — the only profile; the same harness on every machine. The former
+ds-work / ds-personal split was merged on 2026-08-22: their module sets had
+become identical, so the distinction carried no information.
 
 ## Git safety
 
